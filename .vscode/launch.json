@@ -1,0 +1,89 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug (OpenOCD)",
+            "cwd": "${workspaceRoot}",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f1x.cfg"
+            ],
+            "device": "STM32F103RC",
+            "interface": "swd",
+            "preLaunchTask": "debug",
+            "request": "launch",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "executable": "build/debug/${workspaceRootFolderName}.elf",
+            "svdFile": "stm32f103xx.svd",
+            "type": "cortex-debug",
+            "preRestartCommands": [
+                // "file build/debug/${workspaceRootFolderName}.elf",
+                // "load",
+                // "monitor reset",
+                // "enable breakpoint",
+                // "b main"
+            ],
+            "postRestartCommands": [
+                // "c"
+            ],
+            "preLaunchCommands": [
+                "file build/debug/${workspaceRootFolderName}.elf",
+                // "monitor reset",
+                // "monitor halt",
+                // "load",
+                // "enable breakpoint",
+                // "b main"
+            ],
+            "postLaunchCommands": [
+                // "c"
+            ]
+        },
+        {
+            "name": "Download Debug (OpenOCD)",
+            "cwd": "${workspaceRoot}",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f1x.cfg"
+            ],
+            "device": "STM32F103RC",
+            "interface": "swd",
+            "preLaunchTask": "debug",
+            "request": "launch",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "executable": "build/debug/${workspaceRootFolderName}.elf",
+            "svdFile": "stm32f103xx.svd",
+            "type": "cortex-debug",
+            "preLaunchCommands": [
+                "file build/debug/${workspaceRootFolderName}.elf",
+                "load",
+                "monitor reset",
+                "q"
+            ]
+        },
+        {
+            "name": "Download Release (OpenOCD)",
+            "cwd": "${workspaceRoot}",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f1x.cfg"
+            ],
+            "device": "STM32F103RC",
+            "interface": "swd",
+            "preLaunchTask": "debug",
+            "request": "launch",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "executable": "build/release/${workspaceRootFolderName}.elf",
+            "svdFile": "stm32f103xx.svd",
+            "type": "cortex-debug",
+            "preLaunchCommands": [
+                "file build/release/${workspaceRootFolderName}.elf",
+                "load",
+                "monitor reset",
+                "q"
+            ]
+        }
+    ]
+}

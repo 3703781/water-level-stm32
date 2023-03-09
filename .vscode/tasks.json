@@ -1,0 +1,54 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "debug",
+			"command": "make",
+			"args": [
+				"DEBUG=1",
+				"TARGET=${workspaceRootFolderName}",
+                "BUILD_DIR=build/debug"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"type": "shell",
+			"label": "release",
+			"command": "make",
+			"args": [
+				"DEBUG=0",
+				"TARGET=${workspaceRootFolderName}",
+                "BUILD_DIR=build/release"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"type": "shell",
+			"label": "clean",
+			"command": "make",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"args": [
+				"clean",
+				"TARGET=${workspaceRootFolderName}",
+                "BUILD_DIR=build"
+			],
+			"problemMatcher": []
+		}
+	]
+}
