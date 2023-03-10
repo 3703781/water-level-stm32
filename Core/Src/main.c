@@ -68,15 +68,15 @@ typedef struct
 
 static delay_param_struct_typedef __attribute__((aligned(4))) delay_param_struct = {
     .boot_delay = 5.0f,
-    .before_acq = 10.0f,
-    .after_acq = 15.0f,
+    .before_acq = 2.0f,
+    .after_acq = 30.0f,
     .need_start = 0.0f};
 float *delay_param_float_ptr = (float *)(&delay_param_struct); // the paramemter settings
 
 static current_status_struct_typedef __attribute__((aligned(4))) current_status_struct = {
     .after_acq_counter = 5.0f,
-    .before_acq_counter = 10.0f,
-    .after_acq_counter = 15.0f,
+    .before_acq_counter = 2.0f,
+    .after_acq_counter = 30.0f,
     // the current system status
     .is_running = 0.0f};
 
@@ -86,7 +86,7 @@ int32_t water_level_ad_value = -1;
 int32_t water_level_ad_value_display = -1;
 
 uint8_t is_modifyed = 0;
-uint32_t magic_num = 0xdeadbeef;
+uint32_t magic_num = 0x0badc0de;
 
 /* USER CODE END PV */
 
@@ -109,7 +109,7 @@ int _write(int fd, char *ptr, int len)
 int is_running(void)
 {
   /*return 1 means running return 0 means not running*/
-  if (current_status_struct.is_running > 0.5)
+  if (current_status_struct.is_running > 0.5f)
     return 1;
   else
     return 0;
@@ -131,14 +131,14 @@ int key_dispacher(int key_code, float *delay_param_ptr, float *current_status, u
   }
   else if (key_code == KEY0_PRES)
   {
-    delay_param_ptr[*which] += 0.5;
+    delay_param_ptr[*which] += 1.0f;
     if (*which != 3)
       is_modifyed = 1;
     HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
   }
   else if (key_code == KEY1_PRES)
   {
-    delay_param_ptr[*which] -= 0.5;
+    delay_param_ptr[*which] -= 1.0f;
     if (*which != 3)
       is_modifyed = 1;
     HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
@@ -201,9 +201,9 @@ void update_screen(float *delay_param_ptr, current_status_struct_typedef *curren
   LCD_ShowString(30, 190, 300, 24, 24, "A/D Value");
   // show the waterlevel
   if (water_level_ad_value_display > 0)
-    LCD_ShowString(250, 190, 50, 24, 24, "%4d", water_level_ad_value_display);
+    LCD_ShowString(200, 190, 100, 24, 24, "%6.4f V", (float)water_level_ad_value_display * 3.3f / 4096.0f);
   else
-    LCD_ShowString(250, 190, 50, 24, 24, "    ");
+    LCD_ShowString(200, 190, 100, 24, 24, "       ");
 };
 
 int perform_operation(delay_param_struct_typedef *delay_param_struct, current_status_struct_typedef *current_status)
@@ -231,13 +231,13 @@ int perform_operation(delay_param_struct_typedef *delay_param_struct, current_st
     current_status->is_running = 1.0f;
     water_level_ad_value_display = -1;
   }
-  else
-  {
-    // TODO: CANCLE THE PROCESS
-    printf("cancle\r\n");
-  }
+  // else
+  // {
+  //   // TODO: CANCLE THE PROCESS
+  //   printf("cancle\r\n");
+  // }
   // restore the button status
-  delay_param_struct->need_start = 0.0f;
+  // delay_param_struct->need_start = 0.0f;
   return 0;
 }
 /* USER CODE END 0 */
@@ -291,7 +291,7 @@ int main(void)
 
   POINT_COLOR = DARKBLUE;
   BACK_COLOR = WHITE;
-  LCD_ShowString(25, 100, 300, 24, 24, "Loading... total %4.1fs", delay_param_struct.boot_delay);
+  LCD_ShowString(25, 100, 300, 24, 24, "Loading...");
 
   HAL_Delay((int)(delay_param_struct.boot_delay * 1000));
   POINT_COLOR = WHITE;
@@ -380,7 +380,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       current_status_struct.before_acq_counter -= 0.1f;
     else if (water_level_ad_value < 0)
     {
-      printf("acquire the water \r\n");
+      // printf("acquire the water \r\n");
       current_status_struct.before_acq_counter = 0.0f;
       // acquire the water level
       water_level_ad_value = ADC_Read(&hadc1, 200);
@@ -413,6 +413,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+    printf("error\r\n");
   }
   /* USER CODE END Error_Handler_Debug */
 }
