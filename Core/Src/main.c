@@ -86,7 +86,7 @@ int32_t water_level_ad_value = -1;
 int32_t water_level_ad_value_display = -1;
 
 uint8_t is_modifyed = 0;
-uint32_t magic_num = 0x0badc0de;
+uint32_t magic_num = 0x0deadbeef;
 
 /* USER CODE END PV */
 
@@ -127,21 +127,21 @@ int key_dispacher(int key_code, float *delay_param_ptr, float *current_status, u
   {
     (*which)++;
     (*which) %= 4;
-    HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    // HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
   }
   else if (key_code == KEY0_PRES)
   {
     delay_param_ptr[*which] += 1.0f;
     if (*which != 3)
       is_modifyed = 1;
-    HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    // HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
   }
   else if (key_code == KEY1_PRES)
   {
     delay_param_ptr[*which] -= 1.0f;
     if (*which != 3)
       is_modifyed = 1;
-    HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    // HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
   }
 
   /*write to the rom*/
@@ -201,7 +201,7 @@ void update_screen(float *delay_param_ptr, current_status_struct_typedef *curren
   LCD_ShowString(30, 190, 300, 24, 24, "A/D Value");
   // show the waterlevel
   if (water_level_ad_value_display > 0)
-    LCD_ShowString(200, 190, 100, 24, 24, "%6.4f V", (float)water_level_ad_value_display * 3.3f / 4096.0f);
+    LCD_ShowString(200, 190, 100, 24, 24, "%6.3f V", (float)water_level_ad_value_display * 3.3f / 4096.0f);
   else
     LCD_ShowString(200, 190, 100, 24, 24, "       ");
 };
@@ -373,17 +373,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM1)
   {
     // show running status
-    HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    // HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
 
     // counter before the acquisition
     if (current_status_struct.before_acq_counter > 0.0f)
       current_status_struct.before_acq_counter -= 0.1f;
     else if (water_level_ad_value < 0)
     {
+      // 2.4452
       // printf("acquire the water \r\n");
       current_status_struct.before_acq_counter = 0.0f;
       // acquire the water level
-      water_level_ad_value = ADC_Read(&hadc1, 200);
+      water_level_ad_value = ADC_Read(&hadc1, 50);
       HAL_GPIO_WritePin(RELAY_GPIO_Port, RELAY_Pin, GPIO_PIN_RESET);
     }
 
